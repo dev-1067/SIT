@@ -1,0 +1,3 @@
+{
+  "python.defaultInterpreterPath": "${workspaceFolder}/automotive-agent-rag/venv/Scripts/python.exe"
+}

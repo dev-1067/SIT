@@ -1,0 +1,13 @@
+# Environment & Secrets
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+
+# Local databases
+local_db/
+cars_db.json

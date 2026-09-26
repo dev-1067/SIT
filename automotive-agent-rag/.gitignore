@@ -13,6 +13,8 @@ venv/
 # Local runtime data (FAISS index, Mongo fallback store, uploaded manuals)
 backend/app/data/local_db/
 backend/app/data/local_fallback_db/
+local_db/
+cars_db.json
 
 # Node / frontend
 frontend/node_modules/

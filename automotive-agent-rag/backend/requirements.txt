@@ -23,6 +23,7 @@ fpdf2
 
 # MongoDB
 pymongo
+certifi
 
 # Auth
 bcrypt

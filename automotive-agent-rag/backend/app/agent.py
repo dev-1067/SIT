@@ -14,8 +14,6 @@ PROVIDERS = {
         "models": [
             "openai/gpt-oss-120b",
             "openai/gpt-oss-20b",
-            "llama-3.3-70b-versatile",
-            "llama-3.1-8b-instant",
             "qwen/qwen3.8-27b",
             "allam-2-7b",
         ],
@@ -24,8 +22,8 @@ PROVIDERS = {
     },
     "gemini": {
         "label": "Google Gemini",
-        "models": ["gemini-flash-latest", "gemini-pro-latest"],
-        "default_model": "gemini-flash-latest",
+        "models": ["gemini-flash-lite-latest", "gemini-flash-latest", "gemini-pro-latest"],
+        "default_model": "gemini-flash-lite-latest",
         "env_key": "GEMINI_API_KEY",
     },
     "openai": {

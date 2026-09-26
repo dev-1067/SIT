@@ -13,10 +13,9 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Optional
 
-from pymongo import MongoClient
 from pymongo.errors import DuplicateKeyError, PyMongoError
 
-from . import config
+from . import config, mongo_client
 
 logger = logging.getLogger("automotive_rag.auth_db")
 
@@ -57,8 +56,7 @@ class MongoAuthRepository(AuthRepository):
     backend_name = "mongodb"
 
     def __init__(self, uri: str, db_name: str):
-        self.client = MongoClient(uri, serverSelectionTimeoutMS=2500)
-        self.client.admin.command("ping")
+        self.client = mongo_client.connect(uri)
         self.db = self.client[db_name]
         self.users = self.db["users"]
         self.sessions = self.db["sessions"]

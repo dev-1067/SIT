@@ -222,4 +222,9 @@ def chat(req: ChatRequest):
                     "Please pick a different model from the dropdown."
                 ),
             ) from exc
+        if any(s in err_msg for s in ("Connection error", "ConnectError", "getaddrinfo failed", "ConnectTimeout")):
+            raise HTTPException(
+                status_code=503,
+                detail=f"Network connection to {req.provider.capitalize()} servers timed out or dropped. Please check your internet connection or switch provider to Groq."
+            ) from exc
         raise HTTPException(status_code=500, detail=f"An error occurred: {err_msg}") from exc

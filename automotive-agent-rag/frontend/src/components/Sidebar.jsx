@@ -6,7 +6,6 @@ import {
   IconUpload,
   IconTrash,
   IconBook,
-  IconAlert,
   IconDatabase,
   IconChevronRight,
 } from "./Icons";
@@ -108,7 +107,7 @@ export default function Sidebar({
           >
             {Object.entries(providers || {}).map(([key, info]) => (
               <option key={key} value={key}>
-                {info.label} {info.available ? "" : "(no API key)"}
+                {info.label}
               </option>
             ))}
           </select>
@@ -125,12 +124,6 @@ export default function Sidebar({
               </option>
             ))}
           </select>
-          {providerInfo && !providerInfo.available && (
-            <p className="mt-2 flex items-start gap-1.5 text-xs text-amber-300 bg-amber-500/10 border border-amber-500/30 rounded-lg px-2 py-1.5">
-              <IconAlert className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-              No API key configured for this provider in the server's .env file.
-            </p>
-          )}
         </section>
 
         <hr className="border-zinc-800" />

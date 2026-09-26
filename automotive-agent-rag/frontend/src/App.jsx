@@ -208,7 +208,7 @@ export default function App() {
           onSend={handleSend}
           onShowEvidence={setEvidenceOpen}
           onClear={() => setMessages([])}
-          provider={providers?.[provider]?.label || provider}
+          vehicleLabel={`${brand} ${vehicleModel} (${year})`}
           theme={theme}
           onToggleTheme={toggleTheme}
         />

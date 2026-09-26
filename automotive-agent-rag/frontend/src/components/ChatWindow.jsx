@@ -113,7 +113,7 @@ export default function ChatWindow({
   onSend,
   onShowEvidence,
   onClear,
-  provider,
+  vehicleLabel,
   theme,
   onToggleTheme,
 }) {
@@ -153,11 +153,10 @@ export default function ChatWindow({
           <div>
             <h1 className="font-display text-2xl font-bold text-zinc-900 dark:text-zinc-50 flex items-center gap-2">
               <IconCar className="w-6 h-6 text-amber-500" />
-              Automotive Service Desk
+              Service Desk
             </h1>
             <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-              Powered by <span className="font-semibold text-amber-700 dark:text-amber-400">{provider}</span> ·
-              FAISS retrieval · MongoDB manual store
+              Currently servicing <span className="font-semibold text-amber-700 dark:text-amber-400">{vehicleLabel}</span>
             </p>
           </div>
           <button
@@ -191,7 +190,7 @@ export default function ChatWindow({
       <div className="flex-1 overflow-y-auto px-6 py-6 space-y-4">
         {messages.length === 0 && (
           <div className="text-center text-zinc-400 dark:text-zinc-500 text-sm mt-10">
-            Ask a maintenance or operating question about the target vehicle to get started.
+            No conversation yet — ask something below, or try a suggestion above.
           </div>
         )}
         {messages.map((msg, idx) => (

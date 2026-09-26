@@ -24,8 +24,8 @@ PROVIDERS = {
     },
     "gemini": {
         "label": "Google Gemini",
-        "models": ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"],
-        "default_model": "gemini-2.5-flash",
+        "models": ["gemini-flash-latest", "gemini-pro-latest"],
+        "default_model": "gemini-flash-latest",
         "env_key": "GEMINI_API_KEY",
     },
     "openai": {

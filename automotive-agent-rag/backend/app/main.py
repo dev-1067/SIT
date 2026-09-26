@@ -75,10 +75,20 @@ def _index_manual(file_bytes: bytes, filename: str, brand: str, model: str, year
 @app.get("/api/health", response_model=HealthResponse)
 def health():
     repo = get_repository()
+    try:
+        count = len(repo.list_manuals())
+        backend_name = repo.backend_name
+    except Exception:
+        from .db_mongo import LocalManualsRepository, reset_repository_cache
+        reset_repository_cache()
+        repo = LocalManualsRepository(config.LOCAL_FALLBACK_DIR)
+        count = len(repo.list_manuals())
+        backend_name = repo.backend_name
+
     return HealthResponse(
         status="ok",
-        storage_backend=repo.backend_name,
-        manuals_indexed=len(repo.list_manuals()),
+        storage_backend=backend_name,
+        manuals_indexed=count,
     )
 
 

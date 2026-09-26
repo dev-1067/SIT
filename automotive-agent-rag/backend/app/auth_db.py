@@ -194,7 +194,7 @@ def get_auth_repository() -> AuthRepository:
     try:
         _repository = MongoAuthRepository(config.MONGODB_URI, config.MONGODB_DB_NAME)
         logger.info("Auth: connected to MongoDB at %s", config.MONGODB_URI)
-    except PyMongoError as exc:
+    except Exception as exc:
         logger.warning(
             "Auth: MongoDB unreachable (%s). Falling back to local disk-based user storage.", exc
         )

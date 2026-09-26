@@ -204,7 +204,7 @@ def get_repository() -> ManualsRepository:
     try:
         _repository = MongoManualsRepository(config.MONGODB_URI, config.MONGODB_DB_NAME)
         logger.info("Connected to MongoDB at %s", config.MONGODB_URI)
-    except PyMongoError as exc:
+    except Exception as exc:
         logger.warning(
             "MongoDB unreachable (%s). Falling back to local disk-based manual storage. "
             "Set MONGODB_URI in .env to enable persistent MongoDB storage.",

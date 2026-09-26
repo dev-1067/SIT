@@ -3,8 +3,6 @@ import { api, getStoredToken, onUnauthorized, setAuthToken } from "./api/client"
 import Sidebar from "./components/Sidebar";
 import ChatWindow from "./components/ChatWindow";
 import EvidenceDrawer from "./components/EvidenceDrawer";
-import DatabaseViewer from "./components/DatabaseViewer";
-import KeyVerifyPanel from "./components/KeyVerifyPanel";
 import LoginPage from "./components/LoginPage";
 import Toast from "./components/Toast";
 import { IconAlert, IconCar } from "./components/Icons";
@@ -38,8 +36,6 @@ export default function App() {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [evidenceOpen, setEvidenceOpen] = useState(null);
-  const [databaseOpen, setDatabaseOpen] = useState(false);
-  const [keyCheckOpen, setKeyCheckOpen] = useState(false);
   const [toast, setToast] = useState(null);
   const [initError, setInitError] = useState(null);
 
@@ -244,11 +240,8 @@ export default function App() {
         onPreloadManual={handlePreloadManual}
         onResetManuals={handleResetManuals}
         onSelectVehicle={handleSelectVehicle}
-        onOpenDatabase={() => setDatabaseOpen(true)}
-        onOpenKeyCheck={() => setKeyCheckOpen(true)}
         user={user}
         onLogout={handleLogout}
-        health={health}
         busyKey={busyKey}
       />
 
@@ -266,10 +259,6 @@ export default function App() {
       </main>
 
       {evidenceOpen && <EvidenceDrawer evidence={evidenceOpen} onClose={() => setEvidenceOpen(null)} />}
-      {databaseOpen && (
-        <DatabaseViewer health={health} manuals={manuals} onClose={() => setDatabaseOpen(false)} />
-      )}
-      {keyCheckOpen && <KeyVerifyPanel providers={providers} onClose={() => setKeyCheckOpen(false)} />}
       <Toast toast={toast} />
     </div>
   );

@@ -4,6 +4,7 @@ import Sidebar from "./components/Sidebar";
 import ChatWindow from "./components/ChatWindow";
 import EvidenceDrawer from "./components/EvidenceDrawer";
 import DatabaseViewer from "./components/DatabaseViewer";
+import KeyVerifyPanel from "./components/KeyVerifyPanel";
 import Toast from "./components/Toast";
 import { IconAlert } from "./components/Icons";
 
@@ -35,6 +36,7 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [evidenceOpen, setEvidenceOpen] = useState(null);
   const [databaseOpen, setDatabaseOpen] = useState(false);
+  const [keyCheckOpen, setKeyCheckOpen] = useState(false);
   const [toast, setToast] = useState(null);
   const [initError, setInitError] = useState(null);
 
@@ -197,6 +199,7 @@ export default function App() {
         onResetManuals={handleResetManuals}
         onSelectVehicle={handleSelectVehicle}
         onOpenDatabase={() => setDatabaseOpen(true)}
+        onOpenKeyCheck={() => setKeyCheckOpen(true)}
         health={health}
         busyKey={busyKey}
       />
@@ -218,6 +221,7 @@ export default function App() {
       {databaseOpen && (
         <DatabaseViewer health={health} manuals={manuals} onClose={() => setDatabaseOpen(false)} />
       )}
+      {keyCheckOpen && <KeyVerifyPanel providers={providers} onClose={() => setKeyCheckOpen(false)} />}
       <Toast toast={toast} />
     </div>
   );

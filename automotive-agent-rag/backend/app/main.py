@@ -4,7 +4,7 @@ from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 
-from . import agent, config, pdf_utils, vector_store
+from . import agent, config, key_check, pdf_utils, vector_store
 from .db_mongo import get_repository
 from .schemas import (
     ChatRequest,
@@ -81,6 +81,14 @@ def health():
 @app.get("/api/providers")
 def list_providers() -> dict[str, ProviderModelInfo]:
     return agent.get_provider_status()
+
+
+@app.get("/api/providers/verify")
+def verify_providers():
+    """Makes one lightweight real call per configured provider to confirm the
+    key in backend/.env actually authenticates. Lets you self-diagnose
+    'invalid API key' errors without needing anyone else to look at logs."""
+    return key_check.verify_all_providers()
 
 
 @app.get("/api/manuals", response_model=list[ManualOut])

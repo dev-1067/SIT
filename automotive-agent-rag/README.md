@@ -22,14 +22,36 @@ talking to the FastAPI backend over HTTP.
 
 ## Features
 
-- Chat with an AI agent about a specific vehicle's manual (brand/model/year).
+- Chat with an AI agent about a specific vehicle's manual (brand/model/year),
+  with vehicle presets for 6 brands (Volkswagen, Toyota, Honda, Ford, BMW, Audi)
+  plus free-text entry for anything else.
 - Upload your own PDF manuals, or one-click load 4 bundled sample manuals
   (Volkswagen Taos, Toyota Camry, Honda Civic, Ford F-150 — all 2023).
+- Click any registered vehicle chip to instantly set it as the active target
+  vehicle.
 - **Evidence panel**: every answer can show the retrieved manual excerpts,
-  with the source manual, page number, and a link to open the original PDF
-  at that page.
+  each with the source manual, page number, a relevance score, and a link to
+  open the original PDF at that page.
+- **Manual Store viewer** (the "DB" button): shows the live storage backend
+  (MongoDB vs. local fallback) and every stored manual document — useful for
+  demonstrating the MongoDB integration.
 - Switch between Groq, Google Gemini, and OpenAI models at runtime.
+- Light/dark theme toggle (persisted across visits).
+- Copy-to-clipboard and regenerate-answer on any response, message
+  timestamps, an autosizing chat input.
 - Reset the knowledge base from the UI.
+
+## A note on LLM API keys
+
+This app calls Groq, Google Gemini, and OpenAI's own APIs — it cannot create
+accounts or API keys with those providers on your behalf; you need to sign
+up (Groq and Google AI Studio both have generous free tiers) and paste the
+key into `backend/.env`. Without a key, that provider shows "no API key" in
+the dropdown and returns a clear error if selected — it will not silently
+fail. If a specific *model* errors after you send a prompt (e.g. "model not
+found/decommissioned"), it means that model isn't enabled on your provider
+account; pick a different one from the dropdown — the error message will
+say so explicitly.
 
 ## Getting started
 

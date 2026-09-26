@@ -187,10 +187,21 @@ def chat(req: ChatRequest):
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     except Exception as exc:  # noqa: BLE001
         err_msg = str(exc)
-        if any(s in err_msg for s in ("API_KEY_INVALID", "incorrect_api_key", "Invalid API Key")):
+        if any(s in err_msg for s in ("API_KEY_INVALID", "incorrect_api_key", "Invalid API Key", "invalid_api_key")):
             raise HTTPException(status_code=401, detail="Invalid API key configured in the backend .env file.") from exc
-        if any(s in err_msg for s in ("insufficient_quota", "RESOURCE_EXHAUSTED", "429")):
+        if any(s in err_msg for s in ("insufficient_quota", "RESOURCE_EXHAUSTED", "429", "rate_limit")):
             raise HTTPException(
                 status_code=429, detail="Rate limit reached. Please wait a moment or select another AI provider."
+            ) from exc
+        if any(
+            s in err_msg
+            for s in ("model_not_found", "model_decommissioned", "does not exist", "has been decommissioned", "404")
+        ):
+            raise HTTPException(
+                status_code=400,
+                detail=(
+                    f"The selected model is not available on this provider's account ({err_msg[:200]}). "
+                    "Please pick a different model from the dropdown."
+                ),
             ) from exc
         raise HTTPException(status_code=500, detail=f"An error occurred: {err_msg}") from exc

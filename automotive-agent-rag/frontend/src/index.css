@@ -1,7 +1,17 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Work Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+}
+
 :root {
   color-scheme: light;
+}
+.dark {
+  color-scheme: dark;
 }
 
 html, body, #root {
@@ -10,9 +20,11 @@ html, body, #root {
 
 body {
   margin: 0;
-  font-family: ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
-  background-color: #f4f6fb;
-  color: #0f172a;
+  font-family: var(--font-sans);
+}
+
+.font-display {
+  font-family: var(--font-display);
 }
 
 ::-webkit-scrollbar {
@@ -23,21 +35,21 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background-color: #cbd5e1;
+  background-color: rgb(161 161 170 / 0.5);
   border-radius: 9999px;
 }
 
 .markdown p {
-  margin: 0 0 0.5em;
+  margin: 0 0 0.6em;
 }
 .markdown p:last-child {
   margin-bottom: 0;
 }
 .markdown ul, .markdown ol {
-  margin: 0 0 0.5em 1.25em;
+  margin: 0 0 0.6em 1.25em;
 }
 .markdown code {
-  background: #eef2f7;
+  background: rgb(120 113 108 / 0.12);
   padding: 1px 5px;
   border-radius: 4px;
   font-size: 0.85em;

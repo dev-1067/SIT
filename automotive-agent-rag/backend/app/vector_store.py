@@ -1,5 +1,5 @@
 import shutil
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 from langchain_core.documents import Document
 from langchain_community.vectorstores import FAISS
@@ -38,6 +38,19 @@ def get_retriever(k: int = 4):
     if db is None:
         return None
     return db.as_retriever(search_kwargs={"k": k})
+
+
+def search_with_scores(query: str, k: int = 4) -> List[Tuple[Document, float]]:
+    """Similarity search returning (document, relevance) pairs for evidence display.
+
+    FAISS returns an L2 distance (lower = more similar); we convert it to a
+    0-1 "relevance" score so the UI can show something intuitive.
+    """
+    db = load_index()
+    if db is None:
+        return []
+    pairs = db.similarity_search_with_score(query, k=k)
+    return [(doc, 1.0 / (1.0 + max(distance, 0.0))) for doc, distance in pairs]
 
 
 def reset_index() -> None:

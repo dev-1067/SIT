@@ -14,17 +14,18 @@ PROVIDERS = {
         "models": [
             "openai/gpt-oss-120b",
             "openai/gpt-oss-20b",
+            "llama-3.3-70b-versatile",
+            "llama-3.1-8b-instant",
             "qwen/qwen3.8-27b",
             "allam-2-7b",
-            "meta-llama/llama-4-scout-17b-16e-instruct",
         ],
         "default_model": "openai/gpt-oss-120b",
         "env_key": "GROQ_API_KEY",
     },
     "gemini": {
         "label": "Google Gemini",
-        "models": ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"],
-        "default_model": "gemini-2.5-flash",
+        "models": ["gemini-flash-latest", "gemini-pro-latest"],
+        "default_model": "gemini-flash-latest",
         "env_key": "GEMINI_API_KEY",
     },
     "openai": {
@@ -124,19 +125,17 @@ def _make_availability_tool():
 
 
 def _make_retriever_tool(evidence_sink: list):
-    retriever = vector_store.get_retriever(k=4)
-
     @tool
     def knowledge_base_retriever(query: str) -> str:
         """Search for specific technical procedures, troubleshooting steps, and manual instructions."""
-        if retriever is None:
+        if not vector_store.index_exists():
             return "The knowledge base currently contains no indexed vehicle manuals. Inform the customer to index a manual PDF first."
-        docs = retriever.invoke(query)
-        for doc in docs:
-            evidence_sink.append(doc)
-        if not docs:
+        results = vector_store.search_with_scores(query, k=4)
+        for doc, score in results:
+            evidence_sink.append((doc, score))
+        if not results:
             return "No relevant manual sections were found for this query."
-        return "\n\n---\n\n".join(doc.page_content for doc in docs)
+        return "\n\n---\n\n".join(doc.page_content for doc, _ in results)
 
     return knowledge_base_retriever
 
@@ -188,7 +187,7 @@ Follow these exact steps:
 
     evidence = []
     seen = set()
-    for doc in evidence_sink:
+    for doc, score in evidence_sink:
         key = (doc.metadata.get("manual_id"), doc.metadata.get("page"), doc.page_content)
         if key in seen:
             continue
@@ -202,7 +201,9 @@ Follow these exact steps:
                 "year": doc.metadata.get("year"),
                 "manual_id": doc.metadata.get("manual_id"),
                 "source_filename": doc.metadata.get("source"),
+                "relevance": round(score, 3),
             }
         )
+    evidence.sort(key=lambda e: e["relevance"], reverse=True)
 
     return answer, evidence

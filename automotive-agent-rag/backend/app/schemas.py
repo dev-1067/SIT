@@ -19,6 +19,7 @@ class EvidenceItem(BaseModel):
     year: Optional[str] = None
     manual_id: Optional[str] = None
     source_filename: Optional[str] = None
+    relevance: Optional[float] = None
 
 
 class ChatResponse(BaseModel):

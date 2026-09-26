@@ -222,51 +222,37 @@ def check_car_availability(brand_q: str, model_q: str, year_q: str) -> str:
 with st.sidebar:
     st.title("⚙️ Control Panel")
     
-    st.subheader("1. AI Provider & Key")
+    st.subheader("1. AI Engine & Model")
+    provider_options = [
+        "Groq LLaMA (Ultra Fast)",
+        "Google Gemini",
+        "OpenAI"
+    ]
+    has_groq = bool(os.getenv("GROQ_API_KEY", "").strip())
+    has_gemini = bool(os.getenv("GEMINI_API_KEY", "").strip())
+    default_idx = 0 if has_groq else (1 if has_gemini else 0)
+
     provider = st.selectbox(
         "AI Provider",
-        options=["Google Gemini (100% FREE)", "Groq LLaMA (100% FREE - Ultra Fast)", "OpenAI (Paid/Credits)"],
-        index=0,
-        key="selected_provider",
-        help="Google Gemini and Groq give you completely free API keys with no credit card required."
+        options=provider_options,
+        index=default_idx,
+        key="selected_provider"
     )
     
     if "gemini" in provider.lower():
-        server_key = os.getenv("GEMINI_API_KEY", "").strip()
-        st.markdown("[👉 Get Free Gemini Key (10 sec)](https://aistudio.google.com/app/apikey)")
-        if server_key:
-            st.markdown("🟢 **Server Gemini Key Active** *(from `.env`)*")
-            use_custom = st.checkbox("Use a different key", value=False)
-            if use_custom:
-                active_api_key = st.text_input("Custom Gemini API Key", type="password", placeholder="AIzaSy...")
-            else:
-                active_api_key = server_key
-        else:
-            active_api_key = st.text_input("Gemini API Key", type="password", placeholder="AIzaSy...", help="Paste your free key from aistudio.google.com")
-            
+        active_api_key = os.getenv("GEMINI_API_KEY", "").strip()
         gemini_model_choice = st.selectbox(
             "Gemini Model",
-            ["gemini-3.8-flash", "gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash", "✏️ Enter Custom Model Name..."],
+            ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash", "✏️ Enter Custom Model Name..."],
             index=0,
-            help="gemini-3.8-flash is Google's active free-tier model."
+            help="Select the Gemini model variant."
         )
         if gemini_model_choice == "✏️ Enter Custom Model Name...":
-            selected_model = st.text_input("Custom Gemini Model ID", value="gemini-3.8-flash")
+            selected_model = st.text_input("Custom Gemini Model ID", value="gemini-2.5-flash")
         else:
             selected_model = gemini_model_choice
     elif "groq" in provider.lower():
-        server_key = os.getenv("GROQ_API_KEY", "").strip()
-        st.markdown("[👉 Get Free Groq Key (10 sec)](https://console.groq.com/keys)")
-        if server_key:
-            st.markdown("🟢 **Server Groq Key Active** *(from `.env`)*")
-            use_custom = st.checkbox("Use a different key", value=False)
-            if use_custom:
-                active_api_key = st.text_input("Custom Groq Key", type="password", placeholder="gsk_...")
-            else:
-                active_api_key = server_key
-        else:
-            active_api_key = st.text_input("Groq API Key", type="password", placeholder="gsk_...", help="Paste your free key from console.groq.com")
-            
+        active_api_key = os.getenv("GROQ_API_KEY", "").strip()
         groq_model_choice = st.selectbox(
             "Groq Model",
             [
@@ -274,27 +260,18 @@ with st.sidebar:
                 "openai/gpt-oss-20b",
                 "qwen/qwen3.8-27b",
                 "allam-2-7b",
+                "meta-llama/llama-4-scout-17b-16e-instruct",
                 "✏️ Enter Custom Model Name..."
             ],
             index=0,
-            help="Live-verified models available on your Groq account (Sep 2026)."
+            help="High-speed open-source models hosted on Groq."
         )
         if groq_model_choice == "✏️ Enter Custom Model Name...":
             selected_model = st.text_input("Custom Groq Model ID", value="openai/gpt-oss-120b")
         else:
             selected_model = groq_model_choice
     else:
-        server_key = os.getenv("OPENAI_API_KEY", "").strip()
-        if server_key:
-            st.markdown("🟢 **Server OpenAI Key Active** *(from `.env`)*")
-            use_custom = st.checkbox("Use a different key", value=False)
-            if use_custom:
-                active_api_key = st.text_input("Custom OpenAI Key", type="password", placeholder="sk-proj-...")
-            else:
-                active_api_key = server_key
-        else:
-            active_api_key = st.text_input("OpenAI API Key", type="password", placeholder="sk-proj-...")
-            
+        active_api_key = os.getenv("OPENAI_API_KEY", "").strip()
         selected_model = st.selectbox("OpenAI Model", ["gpt-4o-mini", "gpt-4o"], index=0)
     
     st.divider()
@@ -422,7 +399,7 @@ elif user_input:
 # Check API key before running agent
 if active_prompt:
     if not active_api_key:
-        st.error("🔑 Please enter your API Key in the left sidebar or save it in the `.env` file.")
+        st.error(f"⚙️ **Backend Key Missing**: The API key for `{provider}` is not configured in the server's `.env` file.")
     else:
         st.session_state.messages.append({"role": "user", "content": active_prompt})
         with st.chat_message("user"):
@@ -492,8 +469,8 @@ Follow these exact steps:
                 except Exception as e:
                     err_msg = str(e)
                     if "API_KEY_INVALID" in err_msg or "incorrect_api_key" in err_msg or "Invalid API Key" in err_msg:
-                        st.error("❌ Invalid API key. Please check your key in the sidebar or .env file.")
+                        st.error("❌ Invalid API key configured in the backend `.env` file.")
                     elif "insufficient_quota" in err_msg or "RESOURCE_EXHAUSTED" in err_msg or "429" in err_msg:
-                        st.warning("⏳ **Rate limit reached on Google Free Tier (15 requests/min).**\n\n- **Option 1**: Wait ~30 seconds for Google's quota to reset.\n- **Option 2**: Switch to **`Groq LLaMA (100% FREE)`** in the sidebar for instant zero-wait responses!")
+                        st.warning("⏳ **Rate limit reached.** Please wait a moment or select another AI provider in the sidebar.")
                     else:
                         st.error(f"❌ An error occurred: {e}")

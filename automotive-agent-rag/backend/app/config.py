@@ -2,9 +2,16 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-load_dotenv()
+BASE_DIR = Path(__file__).resolve().parent  # backend/app
+BACKEND_DIR = BASE_DIR.parent  # backend/
 
-BASE_DIR = Path(__file__).resolve().parent
+# Load backend/.env by its exact path rather than relying on python-dotenv's
+# CWD-based auto-discovery, which silently finds nothing (and leaves every
+# key blank) if the server isn't launched with `backend/` as the working
+# directory. This makes key loading independent of how/where the process
+# is started.
+load_dotenv(BACKEND_DIR / ".env")
+
 DATA_DIR = BASE_DIR / "data"
 MANUALS_DIR = DATA_DIR / "manuals"
 FAISS_DIR = DATA_DIR / "local_db"

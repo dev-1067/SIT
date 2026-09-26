@@ -153,7 +153,7 @@ export default function ChatWindow({
           <div>
             <h1 className="font-display text-2xl font-bold text-zinc-900 dark:text-zinc-50 flex items-center gap-2">
               <IconCar className="w-6 h-6 text-amber-500" />
-              Service Desk
+              Automotive Customer Service Agent
             </h1>
             <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
               Currently servicing <span className="font-semibold text-amber-700 dark:text-amber-400">{vehicleLabel}</span>

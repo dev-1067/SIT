@@ -81,11 +81,25 @@ Open `http://localhost:5173`.
 
 ### 3. MongoDB
 
-Point `MONGODB_URI` in `backend/.env` at a local `mongod` (default
-`mongodb://localhost:27017`) or a MongoDB Atlas connection string. No
-manual database/collection setup is required — they're created on first
-use. Without MongoDB configured/reachable, manual metadata and files are
-stored on disk under `backend/app/data/local_fallback_db/` instead.
+`MONGODB_URI` in `backend/.env` already defaults to `mongodb://localhost:27017`.
+No manual database/collection setup is required — they're created on first
+use. Two ways to get a real MongoDB listening there:
+
+- **Docker (fastest, for local demos):**
+  ```sh
+  docker run -d --name sit-mongo -p 27017:27017 mongo:7
+  ```
+- **MongoDB Atlas (free, cloud, shareable link):** create a free cluster at
+  https://www.mongodb.com/cloud/atlas, grab its connection string
+  (`mongodb+srv://...`), and paste it as `MONGODB_URI` in `backend/.env`.
+  This is the option to use if you want an actual dashboard URL to show
+  evaluators.
+
+Without MongoDB reachable, the backend automatically falls back to an
+equivalent on-disk store instead of crashing — the sidebar's "Storage"
+label and the in-app **Manual Store** viewer (the "DB" button) both show
+which one is currently active, and the viewer lists every stored document
+either way.
 
 ## Project structure
 

@@ -1,0 +1,25 @@
+fastapi
+uvicorn[standard]
+python-multipart
+python-dotenv
+pydantic
+
+# LangChain core + integrations
+langchain-core
+langchain-text-splitters
+langchain-classic
+langchain-community
+langchain-google-genai
+langchain-groq
+langchain-openai
+
+# Embeddings + vector store
+fastembed
+faiss-cpu
+
+# PDF handling
+PyPDF2
+fpdf2
+
+# MongoDB
+pymongo

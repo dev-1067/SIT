@@ -1,5 +1,7 @@
 # Environment & Secrets
 .env
+backend/.env
+frontend/.env
 
 # Python
 __pycache__/
@@ -8,6 +10,10 @@ __pycache__/
 venv/
 .venv/
 
-# Local databases
-local_db/
-cars_db.json
+# Local runtime data (FAISS index, Mongo fallback store, uploaded manuals)
+backend/app/data/local_db/
+backend/app/data/local_fallback_db/
+
+# Node / frontend
+frontend/node_modules/
+frontend/dist/

@@ -21,6 +21,11 @@ export const api = {
     return data;
   },
 
+  async verifyProviders() {
+    const { data } = await client.get("/api/providers/verify");
+    return data;
+  },
+
   async listManuals() {
     const { data } = await client.get("/api/manuals");
     return data;

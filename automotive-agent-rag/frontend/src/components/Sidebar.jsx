@@ -8,6 +8,7 @@ import {
   IconBook,
   IconDatabase,
   IconChevronRight,
+  IconCheck,
 } from "./Icons";
 
 function VehicleChip({ manual, onSelect }) {
@@ -42,6 +43,7 @@ export default function Sidebar({
   onResetManuals,
   onSelectVehicle,
   onOpenDatabase,
+  onOpenKeyCheck,
   health,
   busyKey,
 }) {
@@ -124,6 +126,13 @@ export default function Sidebar({
               </option>
             ))}
           </select>
+          <button
+            onClick={onOpenKeyCheck}
+            className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-zinc-400 hover:text-amber-300 transition"
+          >
+            <IconCheck className="w-3.5 h-3.5" />
+            Verify API keys
+          </button>
         </section>
 
         <hr className="border-zinc-800" />

@@ -65,3 +65,24 @@ class HealthResponse(BaseModel):
     status: str
     storage_backend: str
     manuals_indexed: int
+
+
+class RegisterRequest(BaseModel):
+    email: str
+    password: str
+
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
+
+class UserOut(BaseModel):
+    id: str
+    email: str
+    created_at: str
+
+
+class AuthResponse(BaseModel):
+    token: str
+    user: UserOut

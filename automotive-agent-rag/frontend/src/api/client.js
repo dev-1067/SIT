@@ -1,6 +1,7 @@
 import axios from "axios";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+const TOKEN_STORAGE_KEY = "auth_token";
 
 const client = axios.create({ baseURL: API_BASE_URL });
 
@@ -8,11 +9,84 @@ function errorMessage(err) {
   return err?.response?.data?.detail || err.message || "Something went wrong.";
 }
 
+let unauthorizedHandler = null;
+
+export function onUnauthorized(handler) {
+  unauthorizedHandler = handler;
+}
+
+export function setAuthToken(token) {
+  if (token) {
+    client.defaults.headers.common.Authorization = `Bearer ${token}`;
+    try {
+      localStorage.setItem(TOKEN_STORAGE_KEY, token);
+    } catch {
+      /* ignore */
+    }
+  } else {
+    delete client.defaults.headers.common.Authorization;
+    try {
+      localStorage.removeItem(TOKEN_STORAGE_KEY);
+    } catch {
+      /* ignore */
+    }
+  }
+}
+
+export function getStoredToken() {
+  try {
+    return localStorage.getItem(TOKEN_STORAGE_KEY);
+  } catch {
+    return null;
+  }
+}
+
+client.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error?.response?.status === 401 && unauthorizedHandler) {
+      unauthorizedHandler();
+    }
+    return Promise.reject(error);
+  }
+);
+
 export const api = {
   baseUrl: API_BASE_URL,
 
   async health() {
     const { data } = await client.get("/api/health");
+    return data;
+  },
+
+  async register(email, password) {
+    try {
+      const { data } = await client.post("/api/auth/register", { email, password });
+      return data;
+    } catch (err) {
+      throw new Error(errorMessage(err));
+    }
+  },
+
+  async login(email, password) {
+    try {
+      const { data } = await client.post("/api/auth/login", { email, password });
+      return data;
+    } catch (err) {
+      throw new Error(errorMessage(err));
+    }
+  },
+
+  async logout() {
+    try {
+      await client.post("/api/auth/logout");
+    } catch {
+      /* logging out should never block the UI, even if the request fails */
+    }
+  },
+
+  async me() {
+    const { data } = await client.get("/api/auth/me");
     return data;
   },
 

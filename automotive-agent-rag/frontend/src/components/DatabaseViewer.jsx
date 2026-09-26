@@ -7,7 +7,7 @@ export default function DatabaseViewer({ health, manuals, onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-zinc-950/60" onClick={onClose} />
+      <div className="absolute inset-0 bg-zinc-950/60 animate-[fadein_0.15s_ease-out]" onClick={onClose} />
       <div className="relative w-full max-w-3xl max-h-[85vh] overflow-y-auto rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-2xl animate-[fadein_0.15s_ease-out]">
         <div className="sticky top-0 bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -16,7 +16,7 @@ export default function DatabaseViewer({ health, manuals, onClose }) {
           </div>
           <button
             onClick={onClose}
-            className="text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 p-1 rounded-lg"
+            className="text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 p-1 rounded-lg transition-all duration-150 hover:scale-110 active:scale-90"
             aria-label="Close"
           >
             <IconX className="w-5 h-5" />
@@ -69,7 +69,7 @@ export default function DatabaseViewer({ health, manuals, onClose }) {
             </h4>
             <button
               onClick={() => setShowRaw((v) => !v)}
-              className="text-xs font-medium text-amber-700 dark:text-amber-400 hover:underline"
+              className="text-xs font-medium text-amber-700 dark:text-amber-400 hover:underline transition-transform duration-150 active:scale-95"
             >
               {showRaw ? "Show table" : "Show raw JSON"}
             </button>

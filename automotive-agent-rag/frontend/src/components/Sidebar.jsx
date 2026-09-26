@@ -9,6 +9,7 @@ import {
   IconDatabase,
   IconChevronRight,
   IconCheck,
+  IconLogout,
 } from "./Icons";
 
 function VehicleChip({ manual, onSelect }) {
@@ -44,6 +45,8 @@ export default function Sidebar({
   onSelectVehicle,
   onOpenDatabase,
   onOpenKeyCheck,
+  user,
+  onLogout,
   health,
   busyKey,
 }) {
@@ -232,7 +235,7 @@ export default function Sidebar({
           <button
             onClick={handleUploadClick}
             disabled={!selectedFile || busyKey === "upload"}
-            className="mt-2 w-full inline-flex items-center justify-center gap-2 rounded-lg bg-amber-500 text-zinc-950 font-semibold py-2 hover:bg-amber-400 disabled:opacity-40 disabled:cursor-not-allowed transition"
+            className="mt-2 w-full inline-flex items-center justify-center gap-2 rounded-lg bg-amber-500 text-zinc-950 font-semibold py-2 hover:bg-amber-400 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-150 hover:shadow-md active:scale-[0.98] disabled:active:scale-100"
           >
             <IconUpload className="w-4 h-4" />
             {busyKey === "upload" ? "Indexing…" : "Process & Index PDF"}
@@ -244,7 +247,7 @@ export default function Sidebar({
                 key={pm.key}
                 onClick={() => onPreloadManual(pm.key)}
                 disabled={busyKey === pm.key}
-                className={`w-full flex items-center gap-2 text-left rounded-lg border px-3 py-2 text-xs font-medium transition ${
+                className={`w-full flex items-center gap-2 text-left rounded-lg border px-3 py-2 text-xs font-medium transition-all duration-150 hover:shadow-md active:scale-[0.98] disabled:active:scale-100 ${
                   pm.loaded
                     ? "border-emerald-700 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20"
                     : "border-zinc-700 bg-zinc-900 text-zinc-300 hover:bg-zinc-800"
@@ -285,13 +288,35 @@ export default function Sidebar({
           {manuals && manuals.length > 0 && (
             <button
               onClick={onResetManuals}
-              className="mt-3 w-full inline-flex items-center justify-center gap-2 rounded-lg border border-rose-800 text-rose-400 text-xs font-semibold py-2 hover:bg-rose-500/10 transition"
+              className="mt-3 w-full inline-flex items-center justify-center gap-2 rounded-lg border border-rose-800 text-rose-400 text-xs font-semibold py-2 hover:bg-rose-500/10 transition-all duration-150 hover:shadow-md active:scale-[0.98]"
             >
               <IconTrash className="w-3.5 h-3.5" />
               Reset Database
             </button>
           )}
         </section>
+
+        {user && (
+          <>
+            <hr className="border-zinc-800" />
+            <section className="flex items-center justify-between">
+              <div className="min-w-0">
+                <p className="text-xs text-zinc-500">Signed in as</p>
+                <p className="text-sm font-medium text-zinc-200 truncate" title={user.email}>
+                  {user.email}
+                </p>
+              </div>
+              <button
+                onClick={onLogout}
+                title="Log out"
+                className="shrink-0 inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-400 hover:text-rose-400 border border-zinc-700 hover:border-rose-800 rounded-lg px-3 py-2 transition-all duration-150 hover:shadow-md active:scale-[0.98]"
+              >
+                <IconLogout className="w-3.5 h-3.5" />
+                Log out
+              </button>
+            </section>
+          </>
+        )}
       </div>
     </aside>
   );

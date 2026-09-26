@@ -1,19 +1,23 @@
 import logging
 
-from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi import Depends, FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 
-from . import agent, config, key_check, pdf_utils, vector_store
+from . import agent, auth, config, key_check, pdf_utils, vector_store
 from .db_mongo import get_repository
 from .schemas import (
+    AuthResponse,
     ChatRequest,
     ChatResponse,
     HealthResponse,
+    LoginRequest,
     ManualOut,
     PreloadedManualStatus,
     ProviderModelInfo,
+    RegisterRequest,
     UploadResponse,
+    UserOut,
 )
 
 logging.basicConfig(level=logging.INFO)
@@ -78,13 +82,42 @@ def health():
     )
 
 
+@app.post("/api/auth/register", response_model=AuthResponse)
+def register(req: RegisterRequest):
+    try:
+        user, token = auth.register(req.email, req.password)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return AuthResponse(token=token, user=UserOut(**user))
+
+
+@app.post("/api/auth/login", response_model=AuthResponse)
+def login(req: LoginRequest):
+    try:
+        user, token = auth.login(req.email, req.password)
+    except ValueError as exc:
+        raise HTTPException(status_code=401, detail=str(exc)) from exc
+    return AuthResponse(token=token, user=UserOut(**user))
+
+
+@app.post("/api/auth/logout")
+def logout(token: str = Depends(auth.get_current_token)):
+    auth.logout(token)
+    return {"status": "ok"}
+
+
+@app.get("/api/auth/me", response_model=UserOut)
+def me(current_user: dict = Depends(auth.get_current_user)):
+    return UserOut(**current_user)
+
+
 @app.get("/api/providers")
-def list_providers() -> dict[str, ProviderModelInfo]:
+def list_providers(current_user: dict = Depends(auth.get_current_user)) -> dict[str, ProviderModelInfo]:
     return agent.get_provider_status()
 
 
 @app.get("/api/providers/verify")
-def verify_providers():
+def verify_providers(current_user: dict = Depends(auth.get_current_user)):
     """Makes one lightweight real call per configured provider to confirm the
     key in backend/.env actually authenticates. Lets you self-diagnose
     'invalid API key' errors without needing anyone else to look at logs."""
@@ -92,13 +125,13 @@ def verify_providers():
 
 
 @app.get("/api/manuals", response_model=list[ManualOut])
-def list_manuals():
+def list_manuals(current_user: dict = Depends(auth.get_current_user)):
     repo = get_repository()
     return [_to_manual_out(r) for r in repo.list_manuals()]
 
 
 @app.get("/api/manuals/preloaded", response_model=list[PreloadedManualStatus])
-def list_preloaded_manuals():
+def list_preloaded_manuals(current_user: dict = Depends(auth.get_current_user)):
     repo = get_repository()
     result = []
     for key, info in config.PRELOADED_MANUALS.items():
@@ -117,7 +150,7 @@ def list_preloaded_manuals():
 
 
 @app.post("/api/manuals/preload/{key}", response_model=UploadResponse)
-def preload_manual(key: str):
+def preload_manual(key: str, current_user: dict = Depends(auth.get_current_user)):
     info = config.PRELOADED_MANUALS.get(key)
     if info is None:
         raise HTTPException(status_code=404, detail=f"Unknown preloaded manual '{key}'.")
@@ -144,6 +177,7 @@ async def upload_manual(
     brand: str = Form(...),
     model: str = Form(...),
     year: str = Form(...),
+    current_user: dict = Depends(auth.get_current_user),
 ):
     if not file.filename.lower().endswith(".pdf"):
         raise HTTPException(status_code=400, detail="Only PDF files are supported.")
@@ -172,7 +206,7 @@ def get_manual_file(manual_id: str):
 
 
 @app.delete("/api/manuals")
-def reset_all():
+def reset_all(current_user: dict = Depends(auth.get_current_user)):
     repo = get_repository()
     repo.delete_all()
     vector_store.reset_index()
@@ -180,7 +214,7 @@ def reset_all():
 
 
 @app.post("/api/chat", response_model=ChatResponse)
-def chat(req: ChatRequest):
+def chat(req: ChatRequest, current_user: dict = Depends(auth.get_current_user)):
     try:
         answer, evidence = agent.run_chat(
             message=req.message,

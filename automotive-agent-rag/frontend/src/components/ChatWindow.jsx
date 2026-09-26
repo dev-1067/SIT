@@ -162,7 +162,7 @@ export default function ChatWindow({
           <button
             onClick={onToggleTheme}
             title="Toggle theme"
-            className="shrink-0 rounded-lg border border-zinc-300 dark:border-zinc-700 p-2 text-zinc-500 dark:text-zinc-300 hover:text-amber-600 dark:hover:text-amber-400 transition"
+            className="shrink-0 rounded-lg border border-zinc-300 dark:border-zinc-700 p-2 text-zinc-500 dark:text-zinc-300 hover:text-amber-600 dark:hover:text-amber-400 transition-all duration-150 hover:shadow-md hover:scale-105 active:scale-95"
           >
             {theme === "dark" ? <IconSun className="w-4 h-4" /> : <IconMoon className="w-4 h-4" />}
           </button>
@@ -174,14 +174,14 @@ export default function ChatWindow({
           <button
             key={text}
             onClick={() => submit(text)}
-            className="inline-flex items-center gap-1.5 text-xs font-medium bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 px-3 py-2 rounded-lg transition"
+            className="inline-flex items-center gap-1.5 text-xs font-medium bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 px-3 py-2 rounded-lg transition-all duration-150 hover:shadow-md active:scale-[0.97]"
           >
             <Icon className="w-3.5 h-3.5" /> {text}
           </button>
         ))}
         <button
           onClick={onClear}
-          className="inline-flex items-center gap-1.5 text-xs font-medium bg-rose-50 dark:bg-rose-500/10 hover:bg-rose-100 dark:hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 px-3 py-2 rounded-lg transition ml-auto"
+          className="inline-flex items-center gap-1.5 text-xs font-medium bg-rose-50 dark:bg-rose-500/10 hover:bg-rose-100 dark:hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 px-3 py-2 rounded-lg transition-all duration-150 hover:shadow-md active:scale-[0.97] ml-auto"
         >
           <IconBroom className="w-3.5 h-3.5" /> Clear
         </button>
@@ -225,12 +225,12 @@ export default function ChatWindow({
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Ask an automotive maintenance or operating question… (Enter to send, Shift+Enter for newline)"
-            className="flex-1 resize-none rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+            className="flex-1 resize-none rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-sm transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-amber-500"
           />
           <button
             type="submit"
             disabled={loading || !input.trim()}
-            className="inline-flex items-center gap-2 rounded-xl bg-amber-500 text-zinc-950 font-semibold px-5 py-3 text-sm hover:bg-amber-400 disabled:opacity-40 disabled:cursor-not-allowed transition"
+            className="inline-flex items-center gap-2 rounded-xl bg-amber-500 text-zinc-950 font-semibold px-5 py-3 text-sm hover:bg-amber-400 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-150 hover:shadow-md active:scale-[0.97] disabled:active:scale-100"
           >
             <IconSend className="w-4 h-4" />
             Send

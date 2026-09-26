@@ -197,9 +197,19 @@ def chat(req: ChatRequest):
         err_msg = str(exc)
         if any(s in err_msg for s in ("API_KEY_INVALID", "incorrect_api_key", "Invalid API Key", "invalid_api_key")):
             raise HTTPException(status_code=401, detail="Invalid API key configured in the backend .env file.") from exc
-        if any(s in err_msg for s in ("insufficient_quota", "RESOURCE_EXHAUSTED", "429", "rate_limit")):
+        if "credit_balance_exhausted" in err_msg or ("insufficient_quota" in err_msg and req.provider == "openai"):
             raise HTTPException(
-                status_code=429, detail="Rate limit reached. Please wait a moment or select another AI provider."
+                status_code=402,
+                detail="OpenAI account credit balance is exhausted ($0 balance). Please add credits at https://platform.openai.com/billing or switch provider to Groq (100% free) in the sidebar."
+            ) from exc
+        if any(s in err_msg for s in ("RESOURCE_EXHAUSTED", "free_tier_requests")):
+            raise HTTPException(
+                status_code=429,
+                detail="Google Gemini free-tier daily quota limit reached. Please select 'gemini-flash-lite-latest' or switch provider to Groq (100% free) in the sidebar."
+            ) from exc
+        if any(s in err_msg for s in ("insufficient_quota", "429", "rate_limit")):
+            raise HTTPException(
+                status_code=429, detail="Rate limit reached for this provider/model. Please wait a moment or switch to Groq in the sidebar."
             ) from exc
         if any(
             s in err_msg

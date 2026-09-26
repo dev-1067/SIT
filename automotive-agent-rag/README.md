@@ -25,7 +25,15 @@ talking to the FastAPI backend over HTTP.
 - **Authentication**: sign in / create account / log out, backed by MongoDB
   (`users` + `sessions` collections, bcrypt-hashed passwords, server-side
   session tokens so logout actually invalidates them). Every API route
-  except `/api/auth/*` and `/api/health` requires a valid session.
+  except `/api/auth/*` and `/api/health` requires a valid session. There's
+  no built-in account — anyone can register their own from the login page,
+  or seed one from the command line:
+  ```sh
+  cd backend && python scripts/seed_user.py dev@sit.com dev-sit
+  ```
+  (defaults to `dev@sit.com` / `dev-sit` if you omit the arguments). This
+  writes to whichever database `backend/.env` points at, same as the app
+  itself — it doesn't create anything remotely.
 - Chat with an AI agent about a specific vehicle's manual (brand/model/year),
   with vehicle presets for 6 brands (Volkswagen, Toyota, Honda, Ford, BMW, Audi)
   plus free-text entry for anything else.

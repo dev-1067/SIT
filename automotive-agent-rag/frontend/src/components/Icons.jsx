@@ -176,6 +176,14 @@ export const IconClock = (p) => (
   </Svg>
 );
 
+export const IconLogout = (p) => (
+  <Svg {...p}>
+    <path d="M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3" />
+    <path d="M16 15l4-3-4-3" />
+    <path d="M20 12H9" />
+  </Svg>
+);
+
 export const IconLayers = (p) => (
   <Svg {...p}>
     <path d="m12 3 8.5 4.5L12 12 3.5 7.5 12 3Z" />

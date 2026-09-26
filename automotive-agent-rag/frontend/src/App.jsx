@@ -1,11 +1,13 @@
 import { useEffect, useState, useCallback } from "react";
-import { api } from "./api/client";
+import { api, getStoredToken, onUnauthorized, setAuthToken } from "./api/client";
 import Sidebar from "./components/Sidebar";
 import ChatWindow from "./components/ChatWindow";
 import EvidenceDrawer from "./components/EvidenceDrawer";
-
+import DatabaseViewer from "./components/DatabaseViewer";
+import KeyVerifyPanel from "./components/KeyVerifyPanel";
+import LoginPage from "./components/LoginPage";
 import Toast from "./components/Toast";
-import { IconAlert } from "./components/Icons";
+import { IconAlert, IconCar } from "./components/Icons";
 
 function getInitialTheme() {
   try {
@@ -19,6 +21,8 @@ function getInitialTheme() {
 
 export default function App() {
   const [theme, setTheme] = useState(getInitialTheme);
+  const [user, setUser] = useState(null);
+  const [authChecking, setAuthChecking] = useState(true);
   const [health, setHealth] = useState(null);
   const [providers, setProviders] = useState(null);
   const [provider, setProvider] = useState("groq");
@@ -34,7 +38,8 @@ export default function App() {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [evidenceOpen, setEvidenceOpen] = useState(null);
-
+  const [databaseOpen, setDatabaseOpen] = useState(false);
+  const [keyCheckOpen, setKeyCheckOpen] = useState(false);
   const [toast, setToast] = useState(null);
   const [initError, setInitError] = useState(null);
 
@@ -67,7 +72,38 @@ export default function App() {
     setHealth(healthData);
   }, []);
 
+  const handleLogout = useCallback(async () => {
+    await api.logout();
+    setAuthToken(null);
+    setUser(null);
+    setMessages([]);
+  }, []);
+
   useEffect(() => {
+    onUnauthorized(() => {
+      setAuthToken(null);
+      setUser(null);
+    });
+    (async () => {
+      const token = getStoredToken();
+      if (!token) {
+        setAuthChecking(false);
+        return;
+      }
+      setAuthToken(token);
+      try {
+        const me = await api.me();
+        setUser(me);
+      } catch {
+        setAuthToken(null);
+      } finally {
+        setAuthChecking(false);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    if (!user) return;
     (async () => {
       try {
         const providerData = await api.getProviders();
@@ -81,7 +117,7 @@ export default function App() {
         setInitError(err.message || "Could not reach the backend API.");
       }
     })();
-  }, [refreshManuals]);
+  }, [user, refreshManuals]);
 
   useEffect(() => {
     if (providers && providers[provider]) {
@@ -159,6 +195,18 @@ export default function App() {
     }
   };
 
+  if (authChecking) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-zinc-100 dark:bg-zinc-950">
+        <IconCar className="w-8 h-8 text-amber-500 animate-pulse" />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <LoginPage onAuthenticated={setUser} />;
+  }
+
   if (initError) {
     return (
       <div className="h-screen flex items-center justify-center bg-zinc-100 dark:bg-zinc-950 px-6">
@@ -196,6 +244,11 @@ export default function App() {
         onPreloadManual={handlePreloadManual}
         onResetManuals={handleResetManuals}
         onSelectVehicle={handleSelectVehicle}
+        onOpenDatabase={() => setDatabaseOpen(true)}
+        onOpenKeyCheck={() => setKeyCheckOpen(true)}
+        user={user}
+        onLogout={handleLogout}
+        health={health}
         busyKey={busyKey}
       />
 
@@ -213,7 +266,10 @@ export default function App() {
       </main>
 
       {evidenceOpen && <EvidenceDrawer evidence={evidenceOpen} onClose={() => setEvidenceOpen(null)} />}
-
+      {databaseOpen && (
+        <DatabaseViewer health={health} manuals={manuals} onClose={() => setDatabaseOpen(false)} />
+      )}
+      {keyCheckOpen && <KeyVerifyPanel providers={providers} onClose={() => setKeyCheckOpen(false)} />}
       <Toast toast={toast} />
     </div>
   );

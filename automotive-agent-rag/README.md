@@ -22,6 +22,10 @@ talking to the FastAPI backend over HTTP.
 
 ## Features
 
+- **Authentication**: sign in / create account / log out, backed by MongoDB
+  (`users` + `sessions` collections, bcrypt-hashed passwords, server-side
+  session tokens so logout actually invalidates them). Every API route
+  except `/api/auth/*` and `/api/health` requires a valid session.
 - Chat with an AI agent about a specific vehicle's manual (brand/model/year),
   with vehicle presets for 6 brands (Volkswagen, Toyota, Honda, Ford, BMW, Audi)
   plus free-text entry for anything else.

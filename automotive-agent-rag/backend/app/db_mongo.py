@@ -18,10 +18,9 @@ from pathlib import Path
 from typing import List, Optional
 
 from bson import ObjectId
-from pymongo import MongoClient
 from pymongo.errors import PyMongoError
 
-from . import config
+from . import config, mongo_client
 
 logger = logging.getLogger("automotive_rag.db")
 
@@ -66,29 +65,7 @@ class MongoManualsRepository(ManualsRepository):
     def __init__(self, uri: str, db_name: str):
         import gridfs
 
-        client = None
-        last_err = None
-        for use_certifi in (False, True):
-            kwargs = {"serverSelectionTimeoutMS": 5000}
-            if use_certifi:
-                try:
-                    import certifi
-                    kwargs["tlsCAFile"] = certifi.where()
-                except ImportError:
-                    continue
-            try:
-                candidate = MongoClient(uri, **kwargs)
-                candidate.admin.command("ping")
-                client = candidate
-                break
-            except Exception as err:
-                last_err = err
-                continue
-
-        if client is None:
-            raise last_err
-
-        self.client = client
+        self.client = mongo_client.connect(uri)
         self.db = self.client[db_name]
         self.manuals = self.db["manuals"]
         self.fs = gridfs.GridFS(self.db, collection="manual_files")

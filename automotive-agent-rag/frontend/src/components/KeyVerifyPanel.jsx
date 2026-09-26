@@ -53,7 +53,7 @@ export default function KeyVerifyPanel({ providers, onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-zinc-950/60" onClick={onClose} />
+      <div className="absolute inset-0 bg-zinc-950/60 animate-[fadein_0.15s_ease-out]" onClick={onClose} />
       <div className="relative w-full max-w-lg max-h-[85vh] overflow-y-auto rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-2xl animate-[fadein_0.15s_ease-out]">
         <div className="sticky top-0 bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 px-6 py-4 flex items-center justify-between">
           <h3 className="font-display font-bold text-zinc-900 dark:text-zinc-100">API Key Check</h3>
@@ -62,11 +62,11 @@ export default function KeyVerifyPanel({ providers, onClose }) {
               onClick={runCheck}
               disabled={loading}
               title="Re-check"
-              className="text-zinc-400 hover:text-amber-600 dark:hover:text-amber-400 p-1 rounded-lg disabled:opacity-40"
+              className="text-zinc-400 hover:text-amber-600 dark:hover:text-amber-400 p-1 rounded-lg transition-all duration-150 hover:scale-110 active:scale-90 disabled:opacity-40 disabled:active:scale-100"
             >
               <IconRefresh className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
             </button>
-            <button onClick={onClose} className="text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 p-1 rounded-lg">
+            <button onClick={onClose} className="text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 p-1 rounded-lg transition-all duration-150 hover:scale-110 active:scale-90">
               <IconX className="w-5 h-5" />
             </button>
           </div>

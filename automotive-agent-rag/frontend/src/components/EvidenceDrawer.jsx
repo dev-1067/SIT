@@ -19,7 +19,7 @@ export default function EvidenceDrawer({ evidence, onClose }) {
 
   return (
     <div className="fixed inset-0 z-40 flex justify-end">
-      <div className="absolute inset-0 bg-zinc-950/40" onClick={onClose} />
+      <div className="absolute inset-0 bg-zinc-950/40 animate-[fadein_0.15s_ease-out]" onClick={onClose} />
       <div className="relative w-full max-w-md h-full bg-white dark:bg-zinc-900 shadow-2xl overflow-y-auto animate-[slidein_0.2s_ease-out]">
         <div className="sticky top-0 bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 px-5 py-4 flex items-center justify-between">
           <h3 className="font-display font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
@@ -28,7 +28,7 @@ export default function EvidenceDrawer({ evidence, onClose }) {
           </h3>
           <button
             onClick={onClose}
-            className="text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 p-1 rounded-lg"
+            className="text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 p-1 rounded-lg transition-all duration-150 hover:scale-110 active:scale-90"
             aria-label="Close"
           >
             <IconX className="w-5 h-5" />
@@ -54,7 +54,7 @@ export default function EvidenceDrawer({ evidence, onClose }) {
                     href={`${api.manualFileUrl(item.manual_id)}${item.page ? `#page=${item.page}` : ""}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-1 text-xs font-semibold text-amber-700 dark:text-amber-400 hover:underline"
+                    className="inline-flex items-center gap-1 text-xs font-semibold text-amber-700 dark:text-amber-400 hover:underline transition-transform duration-150 active:scale-95"
                   >
                     <IconFile className="w-3.5 h-3.5" />
                     Open source{item.page ? ` (p.${item.page})` : ""}

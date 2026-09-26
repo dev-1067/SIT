@@ -23,3 +23,10 @@ fpdf2
 
 # MongoDB
 pymongo
+certifi
+
+# Auth
+bcrypt
+
+# Live key verification
+requests

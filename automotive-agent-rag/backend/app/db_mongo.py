@@ -66,8 +66,29 @@ class MongoManualsRepository(ManualsRepository):
     def __init__(self, uri: str, db_name: str):
         import gridfs
 
-        self.client = MongoClient(uri, serverSelectionTimeoutMS=2500)
-        self.client.admin.command("ping")
+        client = None
+        last_err = None
+        for use_certifi in (False, True):
+            kwargs = {"serverSelectionTimeoutMS": 5000}
+            if use_certifi:
+                try:
+                    import certifi
+                    kwargs["tlsCAFile"] = certifi.where()
+                except ImportError:
+                    continue
+            try:
+                candidate = MongoClient(uri, **kwargs)
+                candidate.admin.command("ping")
+                client = candidate
+                break
+            except Exception as err:
+                last_err = err
+                continue
+
+        if client is None:
+            raise last_err
+
+        self.client = client
         self.db = self.client[db_name]
         self.manuals = self.db["manuals"]
         self.fs = gridfs.GridFS(self.db, collection="manual_files")

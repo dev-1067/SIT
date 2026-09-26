@@ -6,9 +6,7 @@ import {
   IconUpload,
   IconTrash,
   IconBook,
-  IconDatabase,
   IconChevronRight,
-  IconCheck,
 } from "./Icons";
 
 function VehicleChip({ manual, onSelect }) {
@@ -42,9 +40,6 @@ export default function Sidebar({
   onPreloadManual,
   onResetManuals,
   onSelectVehicle,
-  onOpenDatabase,
-  onOpenKeyCheck,
-  health,
   busyKey,
 }) {
   const fileInputRef = useRef(null);
@@ -86,14 +81,6 @@ export default function Sidebar({
             <IconGauge className="w-5 h-5 text-amber-400" />
             Console
           </h2>
-          {health && (
-            <p className="mt-1 text-xs text-zinc-400">
-              Storage:{" "}
-              <span className={`font-semibold ${health.storage_backend === "mongodb" ? "text-emerald-400" : "text-amber-400"}`}>
-                {health.storage_backend === "mongodb" ? "MongoDB" : "Local fallback"}
-              </span>
-            </p>
-          )}
         </div>
 
         {/* 1. AI Engine & Model */}
@@ -126,13 +113,7 @@ export default function Sidebar({
               </option>
             ))}
           </select>
-          <button
-            onClick={onOpenKeyCheck}
-            className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-zinc-400 hover:text-amber-300 transition"
-          >
-            <IconCheck className="w-3.5 h-3.5" />
-            Verify API keys
-          </button>
+
         </section>
 
         <hr className="border-zinc-800" />
@@ -260,19 +241,11 @@ export default function Sidebar({
         <hr className="border-zinc-800" />
 
         <section>
-          <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center mb-2">
             <h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-widest flex items-center gap-1.5">
               <IconBook className="w-3.5 h-3.5" />
               Registered Vehicles
             </h3>
-            <button
-              onClick={onOpenDatabase}
-              title="Inspect the manual store"
-              className="inline-flex items-center gap-1 text-xs font-medium text-zinc-400 hover:text-amber-300 transition"
-            >
-              <IconDatabase className="w-3.5 h-3.5" />
-              DB
-            </button>
           </div>
           <div className="flex flex-wrap">
             {manuals && manuals.length > 0 ? (
